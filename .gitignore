@@ -1,0 +1,5 @@
+postgresql/.env
+your_spotify/your_spotify_db
+jellyfin/.env
+postgresql/sqls
+your_spotify/.env
