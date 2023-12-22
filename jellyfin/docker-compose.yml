@@ -8,13 +8,25 @@ services:
       - PGID=1000
       - TZ=Asia/Kolkata
     volumes:
-      - /home/pi/media:/config
-      - /home/pi/media/movies:/data/movies
-      - /home/pi/media/shows:/data/shows
-      - /home/pi/media/garrix:/data/garrix
+      - ./jellyfin_config:/config
+      - ~/media/movies:/data/movies
+      - ~/media/shows:/data/shows
+      - ~/media/garrix:/data/garrix
     ports:
       - 8096:8096
       - 8920:8920 #optional
       - 7359:7359/udp #optional
       - 1900:1900/udp #optional
+    restart: unless-stopped
+
+  jellyseerr:
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseerr
+    environment:
+      - LOG_LEVEL=debug
+      - TZ=Asia/Kolkata
+    ports:
+      - 5055:5055
+    volumes:
+      - ./jellyseerr_config:/app/config
     restart: unless-stopped

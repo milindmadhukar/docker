@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LiveTvOptions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <GuideDays xsi:nil="true" />
+  <EnableRecordingSubfolders>false</EnableRecordingSubfolders>
+  <EnableOriginalAudioWithEncodedRecordings>false</EnableOriginalAudioWithEncodedRecordings>
+  <TunerHosts>
+    <TunerHostInfo>
+      <Id>1a4fa724a0744f5c9cc784b2091a0165</Id>
+      <Url>https://iptv-org.github.io/iptv/index.m3u</Url>
+      <Type>m3u</Type>
+      <ImportFavoritesOnly>false</ImportFavoritesOnly>
+      <AllowHWTranscoding>false</AllowHWTranscoding>
+      <EnableStreamLooping>false</EnableStreamLooping>
+      <TunerCount>0</TunerCount>
+    </TunerHostInfo>
+    <TunerHostInfo>
+      <Id>1f39eb25a85e4dd1ae7bd89024b58685</Id>
+      <Url>http://www.apsattv.com/streams.html</Url>
+      <Type>m3u</Type>
+      <ImportFavoritesOnly>false</ImportFavoritesOnly>
+      <AllowHWTranscoding>false</AllowHWTranscoding>
+      <EnableStreamLooping>false</EnableStreamLooping>
+      <TunerCount>0</TunerCount>
+    </TunerHostInfo>
+  </TunerHosts>
+  <ListingProviders>
+    <ListingsProviderInfo>
+      <Id>00f32f7e4271414293c4e1f6435eee05</Id>
+      <Type>xmltv</Type>
+      <Path>http://www.apsattv.com/streams.html</Path>
+      <EnabledTuners />
+      <EnableAllTuners>true</EnableAllTuners>
+      <NewsCategories>
+        <string>news</string>
+        <string>journalism</string>
+        <string>documentary</string>
+        <string>current affairs</string>
+      </NewsCategories>
+      <SportsCategories>
+        <string>sports</string>
+        <string>basketball</string>
+        <string>baseball</string>
+        <string>football</string>
+      </SportsCategories>
+      <KidsCategories>
+        <string>kids</string>
+        <string>family</string>
+        <string>children</string>
+        <string>childrens</string>
+        <string>disney</string>
+      </KidsCategories>
+      <MovieCategories>
+        <string>movie</string>
+      </MovieCategories>
+      <ChannelMappings />
+    </ListingsProviderInfo>
+  </ListingProviders>
+  <PrePaddingSeconds>0</PrePaddingSeconds>
+  <PostPaddingSeconds>0</PostPaddingSeconds>
+  <MediaLocationsCreated />
+  <RecordingPostProcessorArguments>"{path}"</RecordingPostProcessorArguments>
+</LiveTvOptions>
