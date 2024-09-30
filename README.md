@@ -17,7 +17,9 @@
 - Adminer : 8081
 - Qbittorrent : 8080
 - Tubesync : 4848
+- Syncthing: 8384
 
+- Homarr : 7575
 - Bazarr : 6767
 - Flaresolverr : 8191
 - Lidarr : 8686
