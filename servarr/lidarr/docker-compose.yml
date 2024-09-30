@@ -1,0 +1,23 @@
+services:
+  lidarr:
+    image: lscr.io/linuxserver/lidarr:latest
+    container_name: lidarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Kolkata
+    volumes:
+      - ./config:/config
+      - /mnt/harddrive/Media/Music:/music #optional
+      - /home/milind/Downloads/qbittorrent:/downloads #optional
+    ports:
+      - 8686:8686
+    networks:
+      - default
+      - servarr
+    restart: unless-stopped
+
+networks:
+  servarr:
+    name: servarr
+    external: true

@@ -1,0 +1,23 @@
+services:
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Kolkata
+    volumes:
+      - ./config:/config
+      - /mnt/harddrive/Media/Movies:/movies #optional
+      - /mnt/harddrive/Media/TV:/tv #optional
+    ports:
+      - 6767:6767
+    networks:
+      - default
+      - servarr
+    restart: unless-stopped
+
+networks:
+  servarr:
+    name: servarr
+    external: true

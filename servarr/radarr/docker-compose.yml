@@ -1,0 +1,23 @@
+services:
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Kolkata
+    volumes:
+      - ./config:/config
+      - /mnt/harddrive/Media/Movies:/movies #optional
+      - /home/milind/Downloads/qbittorrent:/downloads #optional
+    ports:
+      - 7878:7878
+    networks:
+      - default
+      - servarr
+    restart: unless-stopped
+
+networks:
+  servarr:
+    name: servarr
+    external: true
