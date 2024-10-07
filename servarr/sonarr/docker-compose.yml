@@ -13,7 +13,6 @@ services:
     ports:
       - 8989:8989
     networks:
-      - default
       - servarr
     restart: unless-stopped
 

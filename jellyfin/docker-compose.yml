@@ -28,12 +28,12 @@ services:
       - 5055:5055
     networks:
       - default
-      - arrstack
+      - servarr
     volumes:
       - ./jellyseerr_config:/app/config
     restart: unless-stopped
 
 networks:
-  arrstack:
-    name: arrstack
+  servarr:
+    name: servarr
     external: true

@@ -19,3 +19,7 @@ servarr/prowlarr/config
 servarr/radarr/config
 servarr/sonarr/config
 tubesync/config
+nginx-proxy-manager/data
+nginx-proxy-manager/letsencrypt
+servarr/homarr/configs
+servarr/homarr/data

@@ -1,0 +1,16 @@
+services:
+  recyclarr:
+    image: ghcr.io/recyclarr/recyclarr
+    container_name: recyclarr
+    user: 1000:1000
+    networks:
+      - servarr
+    volumes:
+      - ./config:/config
+    environment:
+      - TZ=Asia/Kolkata
+
+networks:
+  servarr:
+    name: servarr
+    external: true

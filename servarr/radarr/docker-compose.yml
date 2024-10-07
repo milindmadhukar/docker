@@ -13,7 +13,6 @@ services:
     ports:
       - 7878:7878
     networks:
-      - default
       - servarr
     restart: unless-stopped
 
