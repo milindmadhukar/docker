@@ -6,6 +6,8 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Asia/Kolkata
+    networks:
+      - servarr
     volumes:
       - ./jellyfin_config:/config
       - /mnt/harddrive/Media/Movies:/data/movies
@@ -27,7 +29,6 @@ services:
     ports:
       - 5055:5055
     networks:
-      - default
       - servarr
     volumes:
       - ./jellyseerr_config:/app/config
