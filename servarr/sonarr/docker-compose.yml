@@ -9,7 +9,7 @@ services:
     volumes:
       - ./config:/config
       - /mnt/harddrive/Media/TV:/tv #optional
-      - /home/milind/Downloads/qbittorrent:/downloads #optional
+      - /mnt/harddrive/qbittorrent:/downloads #optional
     ports:
       - 8989:8989
     networks:

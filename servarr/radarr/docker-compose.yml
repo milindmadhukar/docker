@@ -9,7 +9,7 @@ services:
     volumes:
       - ./config:/config
       - /mnt/harddrive/Media/Movies:/movies #optional
-      - /home/milind/Downloads/qbittorrent:/downloads #optional
+      - /mnt/harddrive/qbittorrent:/downloads #optional
     ports:
       - 7878:7878
     networks:

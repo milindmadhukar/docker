@@ -9,8 +9,7 @@ services:
       - WEBUI_PORT=8080
     volumes:
       - ./config:/config
-      - ~/Downloads/qbittorrent:/downloads
-      - /mnt/harddrive:/harddrive
+      - /mnt/harddrive/qbittorrent:/downloads
     ports:
       - 8080:8080
       - 6881:6881

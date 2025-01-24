@@ -13,6 +13,10 @@ services:
       - /mnt/harddrive/Media/Movies:/data/movies
       - /mnt/harddrive/Media/TV:/data/shows
       - /mnt/harddrive/Media/Martin Garrix Sets:/data/garrix
+    group_add:
+      - "989"
+    devices:
+      - /dev/dri/renderD128:/dev/dri/renderD128
     ports:
       - 8096:8096
       - 8920:8920 #optional

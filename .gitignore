@@ -23,3 +23,9 @@ nginx-proxy-manager/data
 nginx-proxy-manager/letsencrypt
 servarr/homarr/configs
 servarr/homarr/data
+freshrss/freshrss_data
+mcbedrock/data
+mcbedrock/Minecraft_Bedrock_Launcher-x86_64-v1.1.1.802.AppImage
+postgres/.env
+your_spotify/your_spotify_db
+your_spotify/.env
