@@ -29,3 +29,12 @@ mcbedrock/Minecraft_Bedrock_Launcher-x86_64-v1.1.1.802.AppImage
 postgres/.env
 your_spotify/your_spotify_db
 your_spotify/.env
+hoarder/data
+hoarder/meilisearch/data.ms
+hoarder/.env
+immich/pgdata
+minecraft/data
+mysql/mysql_data
+postiz/.env
+sheepit/.env
+tailscale/.env

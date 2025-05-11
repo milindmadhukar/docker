@@ -2,7 +2,9 @@ services:
   nginx-proxy-manager:
     image: 'jc21/nginx-proxy-manager:latest'
     restart: unless-stopped
-    network_mode: "host"    
+    ports:
+      - 80:80
+      - 81:81
     volumes:
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt

@@ -1,0 +1,10 @@
+services:
+  sheepit:
+    image: sheepitrenderfarm/client:text
+    container_name: sheepit
+    hostname: sheepit
+    tty: true
+    stdin_open: true
+    environment:
+      - SHEEP_LOGIN=$SHEEP_LOGIN
+      - SHEEP_PASSWORD=$SHEEP_PASSWORD
