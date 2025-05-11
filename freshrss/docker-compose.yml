@@ -7,7 +7,7 @@ services:
       # Leave empty to disable admin section
       - FTR_ADMIN_PASSWORD=
     volumes:
-      - fullfeedrss_cache:/var/www/html/cache/rss
+      - ./fullfeedrss_cache:/var/www/html/cache/rss
     ports:
       - "8073:80"
 
@@ -24,6 +24,3 @@ services:
       - ./freshrss_data:/var/www/FreshRSS/data
       - ./freshrss_extensions:/var/www/FreshRSS/extensions
 
-volumes:
-  fullfeedrss_cache:
-    external: true
