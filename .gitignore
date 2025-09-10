@@ -38,3 +38,9 @@ mysql/mysql_data
 postiz/.env
 sheepit/.env
 tailscale/.env
+openwebui/ollama-data
+openwebui/open-webui-data
+openwebui/.env
+postgres/sqls
+postiz/postiz-redis-data
+tailscale/ts/state

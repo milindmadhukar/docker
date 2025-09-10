@@ -1,0 +1,34 @@
+services:
+  live:
+    image: ghcr.io/slowlydev/f1-dash-live:latest
+    restart: always
+    ports:
+      - "4000:4000"
+    environment:
+      - ORIGIN=https://f1dashv.plusxhub.com
+      - LIVE_ADDRESS=0.0.0.0:4000
+      - RUST_LOG=live=debug
+  api:
+    image: ghcr.io/slowlydev/f1-dash-api:latest
+    restart: always
+    ports:
+      - "4001:4001"
+    environment:
+      - ORIGIN=https://f1dashv.plusxhub.com
+      - API_ADDRESS=0.0.0.0:4001
+      - RUST_LOG=api=debug
+  frontend:
+    image: ghcr.io/slowlydev/f1-dash:latest
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+      - live
+    environment:
+      - NEXT_PUBLIC_LIVE_URL=https://f1dashlive.plusxhub.com
+      - API_URL=http://api:4001
+      - DISABLE_IFRAME=1
+      - TRACKING_ID=G-3ZKX0JY1QW
+      - TRACKING_URL=https://base.slowly.dev/rep.js
+      - NEXT_PUBLIC_MAP_KEY=lcgTreisBzMYLrFFSTK2

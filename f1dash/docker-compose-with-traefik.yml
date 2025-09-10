@@ -1,0 +1,79 @@
+services:
+  live:
+    image: ghcr.io/slowlydev/f1-dash-live:latest
+    build:
+      context: .
+      target: live
+    restart: always
+    networks:
+      reverse_proxy:
+        aliases:
+          - f1dash-live
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.f1dash-live.rule=Host(`f1dashlive.plusxhub.com`)"
+      - "traefik.http.routers.f1dash-live.entrypoints=websecure"
+      - "traefik.http.routers.f1dash-live.tls.certresolver=myresolver"
+      - "traefik.http.services.f1dash-live.loadbalancer.server.port=4000"
+      - "traefik.docker.network=reverse_proxy"
+      - "com.centurylinklabs.watchtower.enable=true"
+    environment:
+      - ORIGIN=https://f1dash.plusxhub.com
+      - LIVE_BACKEND_ADDRESS=0.0.0.0:4000
+      - RUST_LOG=live=debug
+
+  api:
+    image: ghcr.io/slowlydev/f1-dash-api:latest
+    build:
+      context: .
+      target: api
+    restart: always
+    networks:
+      reverse_proxy:
+        aliases:
+          - f1dash-api
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.f1dash-api.rule=Host(`f1dashapi.plusxhub.com`)"
+      - "traefik.http.routers.f1dash-api.entrypoints=websecure"
+      - "traefik.http.routers.f1dash-api.tls.certresolver=myresolver"
+      - "traefik.http.services.f1dash-api.loadbalancer.server.port=4001"
+      - "traefik.docker.network=reverse_proxy"
+      - "com.centurylinklabs.watchtower.enable=true"
+    environment:
+      - ORIGIN=https://f1dash.plusxhub.com
+      - API_BACKEND_ADDRESS=0.0.0.0:4001
+      - RUST_LOG=api=debug
+
+  frontend:
+    image: ghcr.io/slowlydev/f1-dash:latest
+    build:
+      context: ./dash/
+    restart: always
+    networks:
+      reverse_proxy:
+        aliases:
+          - f1dash-frontend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.f1dash-frontend.rule=Host(`f1dash.plusxhub.com`)"
+      - "traefik.http.routers.f1dash-frontend.entrypoints=websecure"
+      - "traefik.http.routers.f1dash-frontend.tls.certresolver=myresolver"
+      - "traefik.http.services.f1dash-frontend.loadbalancer.server.port=3000"
+      - "traefik.docker.network=reverse_proxy"
+      - "com.centurylinklabs.watchtower.enable=true"
+    depends_on:
+      - api
+      - live
+    environment:
+      - NEXT_PUBLIC_LIVE_URL=https://f1dashlive.plusxhub.com
+      - API_URL=http://api:4001
+      - DISABLE_IFRAME=1
+      - TRACKING_ID=G-3ZKX0JY1QW
+      - TRACKING_URL=https://base.slowly.dev/rep.js
+      - NEXT_PUBLIC_MAP_KEY=lcgTreisBzMYLrFFSTK2
+
+networks:
+  reverse_proxy:
+    name: reverse_proxy
+    external: true

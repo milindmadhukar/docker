@@ -1,0 +1,9 @@
+services:
+  kali:
+    build: .
+    container_name: kali
+    volumes:
+      - ./kali-data:/root/kali-data
+    network_mode: host
+    tty: true
+    stdin_open: true

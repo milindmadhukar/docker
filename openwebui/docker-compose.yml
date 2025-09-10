@@ -1,0 +1,59 @@
+networks:
+  db:
+    name: db
+    external: true
+  ai-network:
+    driver: bridge
+
+services:
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui
+    ports:
+      - "3000:8080"
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - WEBUI_SECRET_KEY=$WEBUI_SECRET_KEY
+      - ENABLE_RAG_WEB_SEARCH=true
+      - ENABLE_RAG_HYBRID_SEARCH=true
+      - RAG_EMBEDDING_ENGINE=ollama
+      - RAG_EMBEDDING_MODEL=nomic-embed-text
+      - WEBUI_AUTH=true  # Set to true if you want authentication
+    volumes:
+      - ./open-webui-data:/app/backend/data
+    depends_on:
+      - ollama
+      - chroma
+    restart: unless-stopped
+    networks:
+      - ai-network
+      - db
+
+  # Ollama - Local LLM Server
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ./ollama-data:/root/.ollama
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+    restart: unless-stopped
+    networks:
+      - ai-network
+
+  # ChromaDB - Vector Database for RAG
+  chroma:
+    image: chromadb/chroma:latest
+    container_name: chroma
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./chroma-data:/chroma/chroma
+    environment:
+      - CHROMA_SERVER_HOST=0.0.0.0
+      - CHROMA_SERVER_PORT=8000
+    restart: unless-stopped
+    networks:
+      - ai-network

@@ -1,0 +1,12 @@
+services:
+  ersatztv:
+    image: ghcr.io/ersatztv/ersatztv
+    container_name: ersatztv
+    restart: unless-stopped
+    ports:
+      - "8409:8409" # Web UI and API
+    volumes:
+      - ./config:/root/.config/ersatztv
+      - ./media:/mnt/harddrive/Media:ro
+    environment:
+      - TZ=Asia/Kolkata # Set your timezone
