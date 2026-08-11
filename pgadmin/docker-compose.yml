@@ -1,15 +1,24 @@
+version: '3.8'
+
 services:
- pgadmin:
-    image: dpage/pgadmin4
+  pgadmin:
+    image: dpage/pgadmin4:latest
     container_name: pgadmin4
-    restart: always
+    restart: unless-stopped
     ports:
       - "8888:80"
     environment:
-      PGADMIN_DEFAULT_EMAIL: $PGADMIN_DEFAULT_EMAIL
-      PGADMIN_DEFAULT_PASSWORD: $PGADMIN_DEFAULT_PASSWORD
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
     volumes:
-      - pgadmin-data:/var/lib/pgadmin 
+      - ./pgadmin-data:/var/lib/pgadmin
+      - ./pgadmin-sessions:/var/lib/pgadmin/sessions
+    user: root
+    networks:
+      - pgadmin-network
 
-volumes:
-  pgadmin-data:
+networks:
+  pgadmin-network:
+    driver: bridge

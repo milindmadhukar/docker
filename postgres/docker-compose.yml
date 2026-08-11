@@ -5,7 +5,7 @@ networks:
 
 services:
   db:
-    image: postgres:15-alpine
+    image: postgres:17-alpine
     restart: always
     networks:
       - db
@@ -16,7 +16,6 @@ services:
     volumes:
       - ./pgdata:/var/lib/postgresql/data
       - ./sqls:/sqls
-      - /home/milind/Downloads/onlidata.txt:/onlidata.txt
     ports:
       - 5432:5432
 
@@ -26,4 +25,4 @@ services:
     networks:
       - db
     ports:
-      - 8081:8080
+      - 8082:8080

@@ -1,9 +1,35 @@
 services:
   kali:
     build: .
-    container_name: kali
+    container_name: kali-attacker
     volumes:
       - ./kali-data:/root/kali-data
-    network_mode: host
+      - ./wordlists:/root/wordlists
+    networks:
+      - pentest-network
     tty: true
     stdin_open: true
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+      - SYS_ADMIN
+    depends_on:
+      - ssh-target
+
+  ssh-target:
+    build:
+      context: .
+      dockerfile: Dockerfile.target
+    container_name: ssh-target
+    networks:
+      - pentest-network
+    ports:
+      - "2222:22"
+
+networks:
+  pentest-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24

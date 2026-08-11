@@ -1,0 +1,17 @@
+services:
+  fileserver:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:8080"
+    volumes:
+      - /tmp/media:/home/milind/Media
+    restart: unless-stopped
+    container_name: fileserver
+    networks:
+      - fileserver-network
+
+networks:
+  fileserver-network:
+    driver: bridge

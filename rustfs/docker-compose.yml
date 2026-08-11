@@ -1,0 +1,26 @@
+services:
+  rustfs_perms:
+    image: alpine:latest
+    user: root
+    volumes:
+      - ./volumes:/fix_path
+    command: chown -R 10001:10001 /fix_path
+
+  rustfs:
+    image: rustfs/rustfs:latest
+    container_name: rustfs-server
+    depends_on:
+      rustfs_perms:
+        condition: service_completed_successfully
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - ./volumes/data:/data
+    environment:
+      RUSTFS_ADDRESS: ":9000"
+      RUSTFS_ACCESS_KEY: "${RUSTFS_ACCESS_KEY}"
+      RUSTFS_SECRET_KEY: "${RUSTFS_SECRET_KEY}"
+      RUSTFS_CONSOLE_ENABLE: "${RUSTFS_CONSOLE_ENABLE}"
+      RUSTFS_SERVER_DOMAINS: "${RUSTFS_SERVER_DOMAINS}"
+    command: ["/data"]

@@ -10,9 +10,13 @@ services:
       - servarr
     volumes:
       - ./jellyfin_config:/config
-      - /mnt/harddrive/Media/Movies:/data/movies
-      - /mnt/harddrive/Media/TV:/data/shows
-      - /mnt/harddrive/Media/Martin Garrix Sets:/data/garrix
+#     - /mnt/harddrive/Media/Movies:/data/movies
+      - /run/media/milind/rootfs/home/milind/Media/Movies:/data/movies
+
+#     - /mnt/harddrive/Media/TV:/data/shows
+      - /run/media/milind/rootfs/home/milind/Media/Movies:/data/shows
+#      - /mnt/harddrive/Media/Martin Garrix Sets:/data/garrix
+      - /run/media/milind/rootfs/home/milind/Martin Garrix Sets:/data/garrix
     group_add:
       - "989"
     devices:

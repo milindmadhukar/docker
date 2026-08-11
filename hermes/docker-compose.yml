@@ -1,0 +1,153 @@
+# Hermes Agent — VPS stack (docker compose), served at https://hermes.milind.dev
+#
+# One-time setup (interactive — pick provider + paste API key):
+#   cd ~/docker/hermes
+#   docker compose run --rm hermes setup
+#
+# Then either:
+#   docker compose run --rm hermes hermes   # interactive terminal chat
+#   docker compose up -d                    # persistent gateway + web dashboard
+#
+# All state (keys, config, sessions, memories, skills, logs) lives in ./data,
+# which maps to /opt/data inside the container. Nothing is stored anywhere else.
+
+services:
+  hermes:
+    image: nousresearch/hermes-agent:latest
+    container_name: hermes
+    restart: unless-stopped
+    command: ["gateway", "run"]
+    # Bridge networking (was `network_mode: host`, from the upstream compose).
+    # Moved off host so hermes shares a network with mem0 and reaches it by
+    # container name, and so the dashboard is no longer one env-var default away
+    # from the public IP.
+    #
+    # TRADE-OFF: OAuth callback servers (Spotify, etc.) bind
+    # 127.0.0.1:<random-port> *inside* the container. Under host networking that
+    # landed on the host's loopback and `ssh -L` could reach it; on a bridge that
+    # port is not published anywhere. Such flows now need the port publishing
+    # manually (or `docker exec` in-container) for the duration of the redirect.
+    networks:
+      - internal
+      # Lets the Traefik container resolve this one as `hermes`.
+      - reverse_proxy
+    environment:
+      # Remap the container's user to your host uid/gid (see .env).
+      - PUID=${HERMES_PUID:-1000}
+      - PGID=${HERMES_PGID:-1000}
+      # Web dashboard on 9119, protected by basic auth (creds in .env).
+      - HERMES_DASHBOARD=1
+      - HERMES_DASHBOARD_BASIC_AUTH_USERNAME=${DASHBOARD_USER:-admin}
+      - HERMES_DASHBOARD_BASIC_AUTH_PASSWORD=${DASHBOARD_PASS}
+      # 0.0.0.0 is the CONTAINER's namespace now, not the host's — the only way
+      # in from outside is the loopback-pinned `ports:` mapping below, plus
+      # Traefik on the reverse_proxy network.
+      #
+      # It must be 0.0.0.0 rather than a pinned IP: the dashboard validates the
+      # Host header against the bound address (web_server.py:534). On any
+      # explicit non-loopback bind it demands `Host` == that exact IP, so a
+      # proxied request for hermes.milind.dev is rejected with
+      # "Invalid Host header". A 0.0.0.0 bind short-circuits that check
+      # (web_server.py:526), which is what makes the Traefik route work.
+      - HERMES_DASHBOARD_HOST=${DASHBOARD_HOST:-0.0.0.0}
+    # Loopback-only publish, for `ssh -L 9119:127.0.0.1:9119 milind@100.74.136.119`.
+    # Public access is via Traefik at https://hermes.milind.dev, gated by
+    # Authelia (one_factor via the `*.milind.dev` rule). Authelia is the outer
+    # gate; the dashboard then shows its OWN form login at /login — it ignores
+    # `Authorization: Basic`, so the header cannot be injected upstream to skip
+    # it. Sign in there with DASHBOARD_USER / DASHBOARD_PASS from .env.
+    ports:
+      - "127.0.0.1:9119:9119"
+    volumes:
+      - ./data:/opt/data
+    # Extra shared memory for the Playwright/Chromium browser tools.
+    shm_size: "1g"
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: "2.0"
+
+  # --- mem0 self-hosted memory API -------------------------------------------
+  # The published mem0/mem0-api-server image is arm64-ONLY (no linux/amd64
+  # manifest), so it cannot run here — we build the upstream server/ source
+  # instead. See mem0-server/PROVENANCE.txt for the pinned commit.
+  #
+  # Nothing in Hermes points at this yet — the network path exists, but the
+  # bundled mem0 memory plugin is still off. Enabling it is two env vars in
+  # data/.env: MEM0_HOST=http://mem0:8000 and MEM0_API_KEY=<ADMIN_API_KEY from
+  # mem0.env>.
+  mem0:
+    build:
+      context: ./mem0-server
+      # NOT upstream's Dockerfile — it is python:3.12-slim with bare `psycopg`
+      # and no libpq, which crashes on import. See the file for details.
+      dockerfile: Dockerfile.selfhost
+    image: mem0-api-server:local
+    container_name: mem0
+    restart: unless-stopped
+    env_file:
+      - ./mem0.env
+    # Upstream's Dockerfile CMD ends in `--reload` (it is the dev image). Drop
+    # that, and run the alembic migrations for the mem0_app auth DB first.
+    command:
+      - sh
+      - -c
+      - "alembic upgrade head && exec uvicorn main:app --host 0.0.0.0 --port 8000"
+    # Loopback-only publish: this holds your memories and the OpenRouter key,
+    # and the box has a public IP. Host-side debugging only — hermes talks to
+    # it over the `internal` network as http://mem0:8000, not through this.
+    ports:
+      - "127.0.0.1:8888:8000"
+    volumes:
+      - ./mem0-history:/app/history
+    depends_on:
+      mem0-postgres:
+        condition: service_healthy
+    networks:
+      - internal
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: "1.0"
+
+  mem0-postgres:
+    image: pgvector/pgvector:pg17
+    container_name: mem0-postgres
+    restart: unless-stopped
+    shm_size: "128mb"
+    env_file:
+      - ./mem0.env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -q -d postgres -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      # pg17 keeps PGDATA at /var/lib/postgresql/data — mounting the named
+      # volume there really does capture the live data. (pg18 moved it to
+      # /var/lib/postgresql/18/docker; do not carry this path over on upgrade.)
+      - mem0_pgdata:/var/lib/postgresql/data
+      # Creates the mem0_app database that alembic migrates.
+      - ./mem0-server/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh:ro
+    networks:
+      - internal
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+volumes:
+  mem0_pgdata:
+
+networks:
+  # Shared private network: hermes, mem0 and mem0-postgres resolve each other by
+  # container name. Hermes reaches the memory API at http://mem0:8000 — the
+  # 127.0.0.1:8888 publish is only for host-side debugging.
+  internal:
+    name: hermes_internal
+    driver: bridge
+  # Traefik's network, created outside this file.
+  reverse_proxy:
+    external: true

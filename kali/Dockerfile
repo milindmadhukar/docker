@@ -3,7 +3,7 @@ FROM kalilinux/kali-rolling
 ENV DEBIAN_FRONTEND=noninteractive
 ENV USER=root
 
-RUN apt update && apt install -y \
+RUN apt update && apt upgrade -y && apt install -y \
     metasploit-framework \
     set \
     xfce4 \
@@ -14,6 +14,11 @@ RUN apt update && apt install -y \
     iputils-ping \
     curl \
     git \
+    hydra \
+    openssh-client \
+    nmap \
+    seclists \
+    wordlists \
     && apt clean
 
 COPY startup.sh /root/startup.sh

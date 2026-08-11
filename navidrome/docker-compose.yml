@@ -1,0 +1,20 @@
+version: "3"
+services:
+  navidrome:
+    image: deluan/navidrome:latest
+    container_name: navidrome
+    ports:
+      - "${NAVIDROME_PORT:-4533}:4533"
+    environment:
+      # Scan schedule - how often to check for new music
+      ND_SCANSCHEDULE: ${ND_SCANSCHEDULE:-1h}
+      # Log level (error, warn, info, debug, trace)
+      ND_LOGLEVEL: ${ND_LOGLEVEL:-info}
+      # Base URL if behind a reverse proxy (leave empty if not)
+      ND_BASEURL: ${ND_BASEURL:-}
+      # Session timeout in minutes
+      ND_SESSIONTIMEOUT: ${ND_SESSIONTIMEOUT:-24h}
+    volumes:
+      - "${NAVIDROME_DATA:-./navidrome-data}:/data"
+      - "${MUSIC_FOLDER:-/home/milind/Music}:/music:ro"
+    restart: unless-stopped

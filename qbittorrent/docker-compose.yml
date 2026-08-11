@@ -9,7 +9,7 @@ services:
       - WEBUI_PORT=8080
     volumes:
       - ./config:/config
-      - /mnt/harddrive/qbittorrent:/downloads
+      - /home/milind/Downloads:/downloads
     ports:
       - 8080:8080
       - 6881:6881

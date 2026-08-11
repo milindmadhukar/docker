@@ -1,0 +1,10 @@
+root
+admin
+user
+test
+guest
+administrator
+kali
+ubuntu
+pi
+demo
